@@ -35,7 +35,7 @@ def weight_by_class(classe):
     elif classe == "B":
         return 20000
     elif classe == "C":
-        return 0.5
+        return 1000
     else:
         return 0
 
@@ -67,11 +67,15 @@ for produto in produtos:
 
 
     HeatMap(
-        heat_data,
-        radius=70,     
-        blur=10,       
-        min_opacity=0.2
-    ).add_to(grupo_produto)
+         heat_data,
+    radius=35,
+    blur=20,
+    min_opacity=0.2,
+    gradient= {
+        "0.0": 'blue',
+    "0.5": 'yellow',
+    "1.0": 'red'}
+       ).add_to(grupo_produto)
 
     for _, row in df_prod.iterrows():
         popup_text = f"""
