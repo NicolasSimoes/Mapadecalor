@@ -102,21 +102,24 @@ folium.LayerControl().add_to(mapa)
 legend_html = '''
 <div style="
     position: fixed;
-    bottom: 50px; left: 50px;
-    width: 250px; height: 120px;
+    bottom: 50px;
+    left: 50px;
+    width: 250px;
+    /* Remova ou ajuste a linha abaixo */
+    /* height: 120px; */
     background-color: white;
     border:2px solid grey;
     z-index:9999; 
     font-size:14px;
     padding: 10px;
 ">
-<b>Legenda - % DEV (Marcadores)</b><br>
-<span style="color:green;">●</span> Menor que 3%<br>
-<span style="color:orange;">●</span> Entre 3% e 5%<br>
-<span style="color:red;">●</span> Maior ou igual a 5%<br>
-<br>
-<b>Classe (HeatMap)</b><br>
-A = Quente, B = Médio, C = Frio
+ <b>MARCADORES 📌 </b><br>
+    <span style="color:green;">🟢</span>  Devolução Menor que 3%<br>
+    <span style="color:orange;">🟠</span> Devolução Entre 3% e 5%<br>
+    <span style="color:red;">🔴</span>  Devolução Maior ou igual a 5%
+    
+    <br>CALOR 🦯<br>
+    🛑= RENDA ALTA, 🟡 = RENDA MEDIA, 🔵 = RENDA BAIXA<br>
 </div>
 '''
 mapa.get_root().html.add_child(folium.Element(legend_html))
