@@ -25,7 +25,7 @@ df["% DEV"] = (
 df["% DEV"] = pd.to_numeric(df["% DEV"], errors="coerce")
 
 
-df = df.dropna(subset=["LATITUDE", "LONGITUDE", "% DEV", "PRODUTO", "CLASSE"])
+df = df.dropna(subset=["LATITUDE", "LONGITUDE", "% DEV", "PRODUTO", "CLASSE", "VENDA"])
 
 
 def weight_by_class(classe):
@@ -83,6 +83,7 @@ for produto in produtos:
         <b>Bairro:</b> {row['BAIRRO']}<br>
         <b>Cidade:</b> {row['CIDADE']}<br>
         <b>Produto:</b> {row['PRODUTO']}<br>
+         <b>Venda:</b> {row['VENDA']}<br>
         <b>% DEV:</b> {row['% DEV']}<br>
         <b>Classe:</b> {row['CLASSE']}
         """
