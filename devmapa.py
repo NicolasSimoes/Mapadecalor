@@ -4,7 +4,7 @@ from folium.plugins import HeatMap
 import simplekml
 
 
-arquivo_csv = "metro.csv"
+arquivo_csv = "tudo.csv"
 df = pd.read_csv(arquivo_csv, encoding="ISO-8859-1", sep=";")
 
 df.columns = df.columns.str.strip()
@@ -60,7 +60,7 @@ mapa = folium.Map(
 produtos = df["PRODUTO"].unique()
 for produto in produtos:
     df_prod = df[df["PRODUTO"] == produto]
-    grupo_produto = folium.FeatureGroup(name=f"Produto: {produto}")
+    grupo_produto = folium.FeatureGroup(name=f"Produto: {produto}", show=False)
 
 
     heat_data = df_prod[["LATITUDE", "LONGITUDE", "HEAT_PESO"]].values.tolist()
@@ -113,7 +113,7 @@ legend_html = '''
     font-size:14px;
     padding: 10px;
 ">
- <b>MARCADORES 📌 </b><br>
+ <b>MARCADORES  </b><br>
     <span style="color:green;">🟢</span>  Devolução Menor que 3%<br>
     <span style="color:orange;">🟠</span> Devolução Entre 3% e 5%<br>
     <span style="color:red;">🔴</span>  Devolução Maior ou igual a 5%
