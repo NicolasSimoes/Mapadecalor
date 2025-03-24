@@ -9,7 +9,7 @@ df = pd.read_csv(arquivo_csv, encoding="ISO-8859-1", sep=";")
 
 df.columns = df.columns.str.strip()
 
-required_cols = {"LATITUDE", "LONGITUDE", "% DEV", "CLASSE", "PRODUTO", "CLIENTE", "BAIRRO", "CIDADE"}
+required_cols = {"LATITUDE", "LONGITUDE", "% DEV", "CLASSE", "PRODUTO", "CLIENTE", "BAIRRO", "CIDADE","VENDA"}
 if not required_cols.issubset(df.columns):
     raise ValueError(f"O CSV deve conter as colunas: {', '.join(required_cols)}")
 
@@ -23,6 +23,15 @@ df["% DEV"] = (
     .str.replace(",", ".")
 )
 df["% DEV"] = pd.to_numeric(df["% DEV"], errors="coerce")
+
+df["VENDA"] = (
+    df["VENDA"]
+    .astype(str)
+    .str.replace(r"R\$\s*", "", regex=True)  # remove "R$ "
+    .str.replace(r"\.", "", regex=True)      # remove pontos (separador de milhar)
+    .str.replace(",", ".")                   # troca vírgula por ponto
+)
+df["VENDA"] = pd.to_numeric(df["VENDA"], errors="coerce").fillna(0)
 
 
 df = df.dropna(subset=["LATITUDE", "LONGITUDE", "% DEV", "PRODUTO", "CLASSE", "VENDA"])
@@ -51,10 +60,17 @@ def marker_color_by_percent(percent_dev):
         return "red"
 
 
+# Cria o mapa com tamanho responsivo
 mapa = folium.Map(
     location=[df["LATITUDE"].mean(), df["LONGITUDE"].mean()],
-    zoom_start=12
+    zoom_start=12,
+    width="100%",      # utiliza 100% da largura disponível
+    height="100vh"     # altura ajustada para 100% da viewport
 )
+
+# Adiciona a meta tag viewport para responsividade em dispositivos móveis
+meta_viewport = '<meta name="viewport" content="width=device-width, initial-scale=1.0">'
+mapa.get_root().html.add_child(folium.Element(meta_viewport))
 
 
 produtos = df["PRODUTO"].unique()
@@ -87,7 +103,12 @@ for produto in produtos:
         <b>% DEV:</b> {row['% DEV']}<br>
         <b>Classe:</b> {row['CLASSE']}
         """
-        color = marker_color_by_percent(row["% DEV"])
+         # Se VENDA == 0, marcador cinza; caso contrário, cor pelo % DEV
+        if row["VENDA"] == 0:
+            color = "gray"
+        else:
+            color = marker_color_by_percent(row["% DEV"])
+        
         folium.Marker(
             location=[row["LATITUDE"], row["LONGITUDE"]],
             popup=folium.Popup(popup_text, max_width=300),
@@ -101,26 +122,37 @@ folium.LayerControl().add_to(mapa)
 
 
 legend_html = '''
-<div style="
+<style>
+  /* Ajustes de estilo para telas menores */
+  @media (max-width: 600px) {
+    .legend {
+      width: 180px !important;
+      font-size: 12px !important;
+      left: 10px !important;
+      bottom: 10px !important;
+      padding: 5px !important;
+    }
+  }
+</style>
+<div class="legend" style="
     position: fixed;
     bottom: 50px;
     left: 50px;
     width: 250px;
-    /* Remova ou ajuste a linha abaixo */
-    /* height: 120px; */
     background-color: white;
     border:2px solid grey;
     z-index:9999; 
     font-size:14px;
     padding: 10px;
 ">
- <b>MARCADORES  </b><br>
+ <b>MARCADORES</b><br>
     <span style="color:green;">🟢</span>  Devolução Menor que 3%<br>
     <span style="color:orange;">🟠</span> Devolução Entre 3% e 5%<br>
-    <span style="color:red;">🔴</span>  Devolução Maior ou igual a 5%
+    <span style="color:red;">🔴</span>  Devolução Maior ou igual a 5%<br>
+    <span style="color:gray;">⚫</span>  Sem Venda (cinza)<br>
     
     <br>CALOR 🦯<br>
-    🛑= RENDA ALTA, 🟡 = RENDA MEDIA, 🔵 = RENDA BAIXA<br>
+    🛑= RENDA ALTA, 🟡 = RENDA MÉDIA, 🔵 = RENDA BAIXA<br>
 </div>
 '''
 mapa.get_root().html.add_child(folium.Element(legend_html))
