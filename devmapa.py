@@ -9,7 +9,7 @@ df = pd.read_csv(arquivo_csv, encoding="ISO-8859-1", sep=";")
 
 df.columns = df.columns.str.strip()
 
-required_cols = {"LATITUDE", "LONGITUDE", "% DEV", "CLASSE", "PRODUTO", "CLIENTE", "BAIRRO", "CIDADE","VENDA"}
+required_cols = {"LATITUDE", "LONGITUDE", "% DEV", "CLASSE", "PRODUTO", "CLIENTE", "BAIRRO", "CIDADE","VENDA","DEVOLUCAO"}
 if not required_cols.issubset(df.columns):
     raise ValueError(f"O CSV deve conter as colunas: {', '.join(required_cols)}")
 
@@ -33,8 +33,17 @@ df["VENDA"] = (
 )
 df["VENDA"] = pd.to_numeric(df["VENDA"], errors="coerce").fillna(0)
 
+df["DEVOLUCAO"] = (
+    df["DEVOLUCAO"]
+    .astype(str)
+    .str.replace(r"R\$\s*", "", regex=True)  # remove "R$ "
+    .str.replace(r"\.", "", regex=True)      # remove pontos (separador de milhar)
+    .str.replace(",", ".")                   # troca vírgula por ponto
+)
+df["DEVOLUCAO"] = pd.to_numeric(df["DEVOLUCAO"], errors="coerce").fillna(0)
 
-df = df.dropna(subset=["LATITUDE", "LONGITUDE", "% DEV", "PRODUTO", "CLASSE", "VENDA"])
+
+df = df.dropna(subset=["LATITUDE", "LONGITUDE", "% DEV", "PRODUTO", "CLASSE", "VENDA", "DEVOLUCAO", "CODIGO"])
 
 
 def weight_by_class(classe):
@@ -96,6 +105,7 @@ for produto in produtos:
     for _, row in df_prod.iterrows():
         popup_text = f"""
         <b>Cliente:</b> {row['CLIENTE']}<br>
+        <b>Código:</b> {row['CODIGO']}<br>
         <b>Bairro:</b> {row['BAIRRO']}<br>
         <b>Cidade:</b> {row['CIDADE']}<br>
         <b>Produto:</b> {row['PRODUTO']}<br>
@@ -104,7 +114,7 @@ for produto in produtos:
         <b>Classe:</b> {row['CLASSE']}
         """
          # Se VENDA == 0, marcador cinza; caso contrário, cor pelo % DEV
-        if row["VENDA"] == 0:
+        if row["VENDA"] == 0 and row["DEVOLUCAO"] == 0:
             color = "gray"
         else:
             color = marker_color_by_percent(row["% DEV"])
