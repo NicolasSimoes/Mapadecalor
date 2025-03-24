@@ -149,7 +149,7 @@ legend_html = '''
     <span style="color:green;">🟢</span>  Devolução Menor que 3%<br>
     <span style="color:orange;">🟠</span> Devolução Entre 3% e 5%<br>
     <span style="color:red;">🔴</span>  Devolução Maior ou igual a 5%<br>
-    <span style="color:gray;">⚫</span>  Sem Venda (cinza)<br>
+    <span style="color:gray;">⚫</span>  Sem Venda  (cinza)<br>
     
     <br>CALOR 🦯<br>
     🛑= RENDA ALTA, 🟡 = RENDA MÉDIA, 🔵 = RENDA BAIXA<br>
