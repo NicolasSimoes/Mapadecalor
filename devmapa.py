@@ -44,7 +44,7 @@ df["DEVOLUCAO"] = (
 )
 df["DEVOLUCAO"] = pd.to_numeric(df["DEVOLUCAO"], errors="coerce").fillna(0)
 
-df = df.dropna(subset=["LATITUDE", "LONGITUDE", "% DEV", "PRODUTO", "CLASSE", "VENDA"])
+df = df.dropna(subset=["LATITUDE", "LONGITUDE", "% DEV", "PRODUTO", "CLASSE", "VENDA","CODIGO"])
 
 # Função para definir o peso do HeatMap de acordo com a classe
 def weight_by_class(classe):
@@ -115,6 +115,7 @@ for produto in produtos:
     for _, row in df_prod.iterrows():
         popup_text = f"""
         <b>Cliente:</b> {row['CLIENTE']}<br>
+        <b>Codigo:</b> {row['CODIGO']}<br>
         <b>Bairro:</b> {row['BAIRRO']}<br>
         <b>Cidade:</b> {row['CIDADE']}<br>
         <b>Produto:</b> {row['PRODUTO']}<br>
