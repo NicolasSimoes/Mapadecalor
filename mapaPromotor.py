@@ -17,7 +17,7 @@ df = df.dropna(subset=['NOVO PROMOTOR'])
 promotores = df['NOVO PROMOTOR'].unique()
 
 # 3) Criar um mapa base, por exemplo, centralizado no Brasil
-mapa = folium.Map(location=[-15.0, -50.0], zoom_start=4)
+mapa = folium.Map(location=[-3.7424091, -38.4867581], zoom_start=13)
 
 # 4) Para cada promotor, cria uma FeatureGroup (camada)
 for promotor in promotores:
