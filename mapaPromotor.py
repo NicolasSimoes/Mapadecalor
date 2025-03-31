@@ -2,7 +2,7 @@ import pandas as pd
 import folium
 
 # 1) Ler e preparar o DataFrame
-df = pd.read_csv('PROMOTORESCLIENTES.csv', delimiter=';')
+df = pd.read_csv('dbmapaPROMOTORES.csv', encoding="ISO-8859-1", sep=";")
 
 # Converter colunas de coordenadas para valores numéricos
 df['LATITUDE CASA']   = pd.to_numeric(df['LATITUDE CASA'], errors='coerce')
@@ -11,10 +11,10 @@ df['LATITUDE']        = pd.to_numeric(df['LATITUDE'], errors='coerce')
 df['LONGITUDE']       = pd.to_numeric(df['LONGITUDE'], errors='coerce')
 
 # Filtra linhas que têm ao menos alguma informação de promotor
-df = df.dropna(subset=['NOVO PROMOTOR'])
+df = df.dropna(subset=['PROMOTOR'])
 
 # 2) Identificar todos os promotores distintos
-promotores = df['NOVO PROMOTOR'].unique()
+promotores = df['PROMOTOR'].unique()
 
 # 3) Criar um mapa base, por exemplo, centralizado no Brasil
 mapa = folium.Map(location=[-3.7424091, -38.4867581], zoom_start=13)
@@ -23,7 +23,7 @@ mapa = folium.Map(location=[-3.7424091, -38.4867581], zoom_start=13)
 for promotor in promotores:
     # Filtra somente as linhas desse promotor com dados válidos
     df_promotor = df[
-        (df['NOVO PROMOTOR'] == promotor) &
+        (df['PROMOTOR'] == promotor) &
         (df['LATITUDE CASA'].notna()) &
         (df['LONGITUDE CASA'].notna()) &
         (df['LATITUDE'].notna()) &
@@ -40,7 +40,7 @@ for promotor in promotores:
     # Criamos um FeatureGroup para esse promotor
     fg = folium.FeatureGroup(name=f"Promotor {promotor}",show=False)
     
-    # Adicionamos o marcador da casa do promotor
+   
     folium.Marker(
         location=casa_coords,
         popup=f"Casa do Promotor {promotor}",
